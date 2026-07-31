@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consolidado · Levantamiento PipEI</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .res-head{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+       padding:14px 18px;flex:1;min-width:130px}
+  .kpi .n{font-size:26px;font-weight:800;color:var(--navy-2);line-height:1.1}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:4px}
+  .kpi.alert .n{color:var(--rec)}
+  .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 15px;
+        font-size:14px;cursor:pointer;font-family:inherit;color:var(--text)}
+  .chip.on{background:var(--navy-2);color:#fff;border-color:var(--navy-2)}
+  .cq{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      padding:16px;margin-bottom:14px}
+  .cq.disc{border-color:#F0B4A8;background:#FFFBFA}
+  .cq h3{font-size:15.5px;margin:0 0 4px;line-height:1.4}
+  .cq .meta{font-size:12px;color:var(--muted);margin-bottom:12px}
+  .flag{display:inline-block;background:#FDE7E2;color:#8E1F12;font-size:10.5px;font-weight:700;
+        padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:.4px;margin-left:6px}
+  .ans{border-left:3px solid var(--line);padding:8px 0 8px 12px;margin-bottom:10px}
+  .ans:last-child{margin-bottom:0}
+  .ans .quien{font-size:12px;font-weight:700;color:var(--navy-2)}
+  .ans .op{display:inline-block;background:#EFF9FE;border:1px solid #B8E2F5;color:#0C5D80;
+           font-size:12.5px;font-weight:600;padding:2px 9px;border-radius:6px;margin:4px 0}
+  .ans .tx{font-size:14.5px;white-space:pre-wrap;margin-top:3px}
+  .vacio{color:var(--muted);font-style:italic;text-align:center;padding:50px 20px}
+  .cfg{background:#FFF8E8;border:1px solid #F0D9A8;border-radius:var(--radius);
+       padding:16px;font-size:14px;color:#6B4E14;margin-bottom:20px}
+  .cfg code{background:#fff;padding:1px 6px;border-radius:4px;font-size:13px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a href="index.html" class="icon-btn" style="text-decoration:none;display:grid;place-items:center">‹</a>
+  <div class="brand">
+    <div class="logo">LK</div>
+    <div>
+      <div class="brand-name">Consolidado</div>
+      <div class="brand-sub">Levantamiento PipEI</div>
+    </div>
+  </div>
+  <button id="btnCopiar" class="icon-btn" title="Copiar para el documento">⧉</button>
+</header>
+
+<main class="view">
+  <div id="aviso" class="cfg hidden"></div>
+
+  <div class="res-head" id="kpis"></div>
+
+  <div class="filtros" id="filtros"></div>
+
+  <div id="lista"></div>
+</main>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script>
+'use strict';
+const cfg = window.PIPEI_CONFIG || {};
+const ESQ = cfg.esquema || 'levantamiento';
+let datos = [], filtro = 'disc';
+
+const $ = s => document.querySelector(s);
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.remove('hidden');
+  setTimeout(()=>t.classList.add('hidden'),2600);}
+
+async function cargar(){
+  if(!cfg.supabaseUrl || !cfg.supabaseKey){
+    $('#aviso').classList.remove('hidden');
+    $('#aviso').innerHTML = 'Sin conexión a Supabase configurada. Completa <code>config.js</code> ' +
+      'para ver el consolidado de todas las personas. Mientras tanto, cada dispositivo guarda su propio ' +
+      'levantamiento y puede exportarlo desde la pantalla principal.';
+    return;
+  }
+  try{
+    const r = await fetch(
+      `${cfg.supabaseUrl.replace(/\/$/,'')}/rest/v1/v_consolidado?select=*`,
+      { headers:{ apikey:cfg.supabaseKey, Authorization:'Bearer '+cfg.supabaseKey,
+                  'Accept-Profile':ESQ } });
+    if(!r.ok) throw new Error(r.status);
+    datos = await r.json();
+    pintar();
+  }catch(e){
+    $('#aviso').classList.remove('hidden');
+    $('#aviso').textContent = 'No se pudo leer el consolidado: ' + e.message;
+  }
+}
+
+function pintar(){
+  const disc = datos.filter(d => d.n_opciones_distintas > 1);
+  const conAudio = datos.filter(d => d.tiene_audio);
+  const personas = new Set();
+  datos.forEach(d => (d.respuestas||[]).forEach(r => r.entrevistado && personas.add(r.entrevistado)));
+
+  $('#kpis').innerHTML = `
+    <div class="kpi"><div class="n">${datos.length}</div><div class="l">preguntas con respuesta</div></div>
+    <div class="kpi"><div class="n">${personas.size}</div><div class="l">personas entrevistadas</div></div>
+    <div class="kpi ${disc.length?'alert':''}"><div class="n">${disc.length}</div><div class="l">con discrepancia</div></div>
+    <div class="kpi"><div class="n">${conAudio.length}</div><div class="l">con audio</div></div>`;
+
+  const deps = [...new Set(datos.map(d=>d.departamento))];
+  $('#filtros').innerHTML =
+    `<button class="chip ${filtro==='disc'?'on':''}" data-f="disc">⚠ Discrepancias (${disc.length})</button>` +
+    `<button class="chip ${filtro==='todas'?'on':''}" data-f="todas">Todas</button>` +
+    deps.map(d=>{
+      const n = DEPARTAMENTOS.find(x=>x.id===d);
+      return `<button class="chip ${filtro===d?'on':''}" data-f="${d}">${n?n.nombre:d}</button>`;
+    }).join('');
+  $('#filtros').querySelectorAll('.chip').forEach(c =>
+    c.onclick = () => { filtro = c.dataset.f; pintar(); });
+
+  let lista = filtro==='disc' ? disc : filtro==='todas' ? datos : datos.filter(d=>d.departamento===filtro);
+  lista = lista.slice().sort((a,b)=> (b.n_opciones_distintas||0)-(a.n_opciones_distintas||0));
+
+  const cont = $('#lista');
+  if(!lista.length){
+    cont.innerHTML = `<p class="vacio">${filtro==='disc'
+      ? 'Sin discrepancias. Todas las respuestas de selección coinciden entre quienes respondieron.'
+      : 'Todavía no hay respuestas en esta vista.'}</p>`;
+    return;
+  }
+  cont.innerHTML = lista.map(d => {
+    const dep = DEPARTAMENTOS.find(x=>x.id===d.departamento);
+    const dis = d.n_opciones_distintas > 1;
+    return `<article class="cq ${dis?'disc':''}">
+      <h3>${d.pregunta}${dis?'<span class="flag">no coinciden</span>':''}</h3>
+      <div class="meta">${dep?dep.nombre:d.departamento} · ${d.grupo||''} · ${d.n_respuestas} respuesta(s)</div>
+      ${(d.respuestas||[]).map(r=>`
+        <div class="ans">
+          <div class="quien">${r.entrevistado||'Sin identificar'}${r.entrevistador?' · levantó '+r.entrevistador:''}</div>
+          ${r.opcion?`<div class="op">${r.opcion}</div>`:''}
+          ${r.texto?`<div class="tx">${(r.texto+'').replace(/[<>]/g,'')}</div>`:''}
+        </div>`).join('')}
+    </article>`;
+  }).join('');
+}
+
+$('#btnCopiar').onclick = () => {
+  const L = ['CONSOLIDADO DEL LEVANTAMIENTO · PipEI', ''];
+  const disc = datos.filter(d=>d.n_opciones_distintas>1);
+  if(disc.length){
+    L.push('DISCREPANCIAS — revisar antes de especificar','');
+    disc.forEach(d=>{
+      L.push('• ' + d.pregunta);
+      (d.respuestas||[]).forEach(r=>L.push('    ' + (r.entrevistado||'?') + ': ' + (r.opcion||'') + ' ' + (r.texto||'').replace(/\n/g,' ')));
+      L.push('');
+    });
+  }
+  L.push('', 'RESPUESTAS', '');
+  datos.forEach(d=>{
+    L.push('— ' + d.pregunta);
+    (d.respuestas||[]).forEach(r=>{
+      if(r.opcion) L.push('   [' + (r.entrevistado||'?') + '] → ' + r.opcion);
+      if(r.texto)  L.push('   [' + (r.entrevistado||'?') + '] ' + r.texto.replace(/\n/g,'\n      '));
+    });
+    L.push('');
+  });
+  navigator.clipboard.writeText(L.join('\n'))
+    .then(()=>toast('Consolidado copiado'))
+    .catch(()=>toast('No se pudo copiar'));
+};
+
+cargar();
+</script>
+</body>
+</html>

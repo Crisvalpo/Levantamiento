@@ -1,0 +1,16 @@
+{
+  "name": "PipEI · Levantamiento en Terreno",
+  "short_name": "Levantamiento",
+  "description": "Guía de levantamiento para la Especificación Funcional de PipEI",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F4F6F8",
+  "theme_color": "#0F2A47",
+  "lang": "es-CL",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

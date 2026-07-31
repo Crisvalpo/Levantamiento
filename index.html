@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F2A47">
+<title>Levantamiento en Terreno · PipEI</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<header class="top">
+  <button id="btnBack" class="icon-btn hidden" aria-label="Volver">‹</button>
+  <div class="brand">
+    <div class="logo">LK</div>
+    <div>
+      <div class="brand-name">PipEI · Levantamiento</div>
+      <div class="brand-sub" id="ctxLabel">Especificación Funcional</div>
+    </div>
+  </div>
+  <span id="syncDot" class="sync-dot" title="Sin sincronizar"></span>
+  <button id="btnMenu" class="icon-btn" aria-label="Opciones">⋯</button>
+</header>
+
+<!-- ══════════════ 1 · IDENTIFICACIÓN ══════════════ -->
+<main id="viewIdent" class="view">
+  <section class="hero">
+    <h1>Identifícate</h1>
+    <p>Este levantamiento reúne las preguntas cuya respuesta falta para completar la especificación.
+       Cada una corresponde a una decisión de diseño abierta o a un flujo que aún no puede diagramarse.</p>
+  </section>
+
+  <section class="form-block">
+    <label for="entrevistador">Tu nombre <span class="req">*</span></label>
+    <input id="entrevistador" type="text" placeholder="Quién realiza el levantamiento" autocomplete="name">
+
+    <label for="cargo">Tu cargo</label>
+    <input id="cargo" type="text" placeholder="Opcional" autocomplete="organization-title">
+  </section>
+
+  <h2 class="section-title">¿Con qué departamento vas a conversar?</h2>
+  <div id="deptGrid" class="dept-grid"></div>
+  <p id="identHint" class="hint">Escribe tu nombre para continuar.</p>
+
+  <div class="home-actions">
+    <button class="btn ghost" id="btnHallazgos">Hallazgos no previstos</button>
+    <button class="btn ghost" id="btnExport">Exportar respuestas</button>
+  </div>
+
+  <section class="progress-global">
+    <div class="pg-bar"><div class="pg-fill" id="pgFill"></div></div>
+    <div class="pg-text"><span id="pgText">0 de 0 respondidas</span></div>
+  </section>
+
+  <footer class="foot">
+    <span>LukeAPP · EIMISA</span>
+    <span id="storageNote">Funciona sin señal. Se sincroniza al recuperar conexión.</span>
+  </footer>
+</main>
+
+<!-- ══════════════ 2 · CONVERSACIÓN ══════════════ -->
+<main id="viewDept" class="view hidden">
+  <section class="dept-head">
+    <h1 id="deptTitle"></h1>
+    <p id="deptGoal" class="goal"></p>
+    <div class="form-block tight">
+      <label for="entrevistado">¿Con quién estás conversando?</label>
+      <input id="entrevistado" type="text" placeholder="Nombre de la persona" autocomplete="off">
+    </div>
+    <div class="who-line">
+      <button class="btn small ghost" id="btnReadAll">▶ Leer todas</button>
+      <span class="dept-prog" id="deptProg"></span>
+    </div>
+  </section>
+  <div id="qList" class="q-list"></div>
+</main>
+
+<!-- ══════════════ HALLAZGOS ══════════════ -->
+<main id="viewHallazgos" class="view hidden">
+  <section class="dept-head">
+    <h1>Hallazgos no previstos</h1>
+    <p class="goal">Reglas que nadie escribió, excepciones que se manejan de memoria, decisiones que se tomaron
+       y se olvidaron. En el levantamiento hecho hasta ahora, este tipo de hallazgo resultó ser el de mayor valor.</p>
+  </section>
+  <div class="q-list">
+    <article class="q-card">
+      <div class="q-body">
+        <textarea id="hallazgosText" class="answer big" placeholder="Anota aquí lo que aparezca y no esté previsto…"></textarea>
+        <div class="rec-row">
+          <button class="btn rec" data-rec="hallazgos">🎤 Grabar</button>
+          <span class="rec-status" data-status="hallazgos"></span>
+        </div>
+        <div class="clips" data-clips="hallazgos"></div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<!-- ══════════════ MENÚ ══════════════ -->
+<div id="modalExport" class="modal hidden">
+  <div class="modal-box">
+    <h3>Opciones</h3>
+    <p class="modal-p" id="modalWho"></p>
+    <div class="modal-actions">
+      <button class="btn" id="expMd">Descargar como texto</button>
+      <button class="btn" id="expJson">Descargar como JSON</button>
+      <button class="btn ghost" id="expAudio">Descargar audios</button>
+      <button class="btn ghost" id="btnSync">Sincronizar ahora</button>
+    </div>
+    <button class="btn ghost wide" id="expClose">Cerrar</button>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="config.js"></script>
+<script src="data.js"></script>
+<script src="sync.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
