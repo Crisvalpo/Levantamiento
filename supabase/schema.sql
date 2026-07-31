@@ -115,24 +115,78 @@ order by a.creado_en;
 -- políticas ligadas a auth.uid().
 -- ════════════════════════════════════════════════════════════════════
 
+-- ── proyecto: catálogo dinámico de proyectos de la unidad ──────────
+create table if not exists proyecto (
+  codigo        text primary key,
+  nombre        text not null,
+  cliente       text,
+  ubicacion     text,
+  unidad        text,
+  activo        boolean not null default true,
+  creado_en     timestamptz not null default now()
+);
+
 alter table sesion    enable row level security;
 alter table respuesta enable row level security;
 alter table audio     enable row level security;
+alter table proyecto  enable row level security;
 
 drop policy if exists p_sesion    on sesion;
 drop policy if exists p_respuesta on respuesta;
 drop policy if exists p_audio     on audio;
+drop policy if exists p_proyecto  on proyecto;
 
 create policy p_sesion    on sesion    for all using (true) with check (true);
 create policy p_respuesta on respuesta for all using (true) with check (true);
 create policy p_audio     on audio     for all using (true) with check (true);
+create policy p_proyecto  on proyecto  for all using (true) with check (true);
 
 grant usage on schema levantamiento to anon, authenticated;
 grant all on all tables in schema levantamiento to anon, authenticated;
 grant select on v_consolidado, v_discrepancias, v_cobertura, v_pendiente_transcribir
   to anon, authenticated;
 
+-- Poblado inicial de catálogo de proyectos
+insert into proyecto (codigo, nombre, cliente, ubicacion, unidad) values
+  ('EIMI00417', 'Contrato CC-006 Obras Civiles y Montaje Electromecánico PG210 Área Puerto', 'Collahuasi', 'Iquique', 'EMISA'),
+  ('EIMI00416', 'EPV1 Servicio de Ingeniería Etapa FEED', null, null, 'EMISA'),
+  ('EIMI00415', 'PET0016-E Construcción y Montaje Condensadores Síncronos S/E Montemina', 'Montemina', 'Antofagasta', 'EMISA'),
+  ('EIMI00414', 'Servicios de Obras Multidisciplinarias MGA Contrato 4600027683', 'CODELCO', 'Rancagua', 'EMISA'),
+  ('EIMI00413', 'Ejecución Montaje Espesador de Cabeza PMFC-DAND', 'CODELCO', 'Andina / Los Andes', 'EMISA'),
+  ('EIMI00412', 'Ejecución Montaje Electromecánico Proyecto Nuevas Prensas de Lodos Planta Santa Fe', 'CMPC PULP SpA', 'Nacimiento', 'EMISA'),
+  ('EIMI00410', 'Apoyo EIMI Perú (Cerro Verde)', 'Sociedad Minera cerro verde', 'Arequipa', 'EMISA'),
+  ('EIMI00409', 'Centro Operaciones Rancagua', null, 'Rancagua', 'EMISA'),
+  ('EIMI00408', 'CC-030 Construcción y Montaje Área Seca Óxidos y Área Hidrometalurgia', null, 'Diego De Almagro', 'EMISA'),
+  ('EIMI00407', 'Servicio de Constructibilidad del Proyecto Santo Domingo - Capstone Copper', 'Capstone Copper', null, 'EMISA'),
+  ('EIMI00406', 'Construcción Defensas Fluviales y Línea de Impulsión ACM Matadero', 'CODELCO', 'Rancagua', 'EMISA'),
+  ('EIMI00405', 'Contrato Obras Uso de Recursos GPRO 2024', null, 'Rancagua', 'EMISA'),
+  ('EIMI00404', 'Ejecución Obras Civiles Proyecto Nuevas Prensas de Lodos Planta Santa Fe', 'CMPC PULP SpA', 'Nacimiento', 'EMISA'),
+  ('EIMI00403', 'Construcción OOCC y Montaje Electromecánico y Ampliación Botadero de Ripios Fase IX DRT', 'CODELCO', 'Calama', 'EMISA'),
+  ('EIMI00402', 'Reemplazo y Cambio Tubos Caldera de Poder Línea 2 Planta Arauco', 'Planta Arauco', 'Arauco', 'EMISA'),
+  ('EIMI00401', 'CC-031 Obras Misceláneos N2', null, 'Diego De Almagro', 'EMISA'),
+  ('EIMI00400', 'Construcción y Montaje Electromecánico Paquete PG3A Proyecto Crecimiento Ujina', 'COMPAÑÍA MINERA DOÑA INÉS DE COLLAHUASI', 'Iquique', 'EMISA'),
+  ('EIMI00398', 'Construcción y Montaje Etapa 1 Proyecto Prueba Piloto IP3 TCF Planta Valdivia', null, 'Valdivia', 'EMISA'),
+  ('EIMI00397', 'Construcción y Montaje Condensadores Síncronos S/E Ana María', null, 'María Elena / Antofagasta', 'EMISA'),
+  ('EIMI00396', 'C-744 Montaje Electromecánico - Proyecto de Reducción de Aguas CMPC Planta Pacífico', 'CMPC', 'Mininco / Collipulli', 'EMISA'),
+  ('EIMI00395', 'Construcción y Montaje Civil Electromecánico Nuevo Concentrador 1D Planta Valdivia', null, 'Valdivia', 'EMISA'),
+  ('EIMI00393', 'Obras de Mejoramiento Taller La Junta Contrato 4600027978', null, 'Rancagua', 'EMISA'),
+  ('EIMI00389', 'K484 ENAP SWS and WSA Unit Aconcagua Refinery Chile I03 General Construction Works', 'TECNIMONT / ENAP', 'Concón', 'EMISA'),
+  ('EIMI00388', 'Montaje Civil Electromecánico Proyecto Estanque de Contacto Planta Nueva Aldea', 'Arauco', 'Nueva Aldea', 'EMISA'),
+  ('EIMI00387', 'EPC Muelle Centinela', null, 'Sierra Gorda / Centinela', 'EMISA'),
+  ('EIMI00384', 'Electromecánico Proyecto Upgrade Evaporadores SF2 Planta San', 'CMPC', 'Nacimiento', 'EMISA'),
+  ('EIMI00379', 'Servicios Multidisciplinarios', 'CODELCO', 'Rancagua', 'EMISA'),
+  ('MIPE00103', 'Reubicación Sala Eléctrica Faja 10 Colección Polvos Cuajone', null, 'Cuajone', 'EMISA'),
+  ('MIPE00102', 'Talleres de Mantenimiento Concentradora Cuajone', null, 'Cuajone', 'EMISA'),
+  ('MIPE00101', 'Servicios Electromecánica Sistema de Manejo - Proyecto IPCC', 'Sociedad Minera cerro verde', 'Arequipa', 'EMISA')
+on conflict (codigo) do update set
+  nombre = excluded.nombre,
+  cliente = excluded.cliente,
+  ubicacion = excluded.ubicacion,
+  unidad = excluded.unidad,
+  activo = true;
+
 -- Bucket de audio (crear también desde el panel si se prefiere)
 insert into storage.buckets (id, name, public)
 values ('levantamiento-audio', 'levantamiento-audio', false)
 on conflict (id) do nothing;
+

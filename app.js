@@ -186,18 +186,40 @@ function pintarIdent() {
   $('#cargo').value = store.cargo || '';
 
   // selector de proyecto
+  let listaProyectos = PROYECTOS;
+  try {
+    const cached = localStorage.getItem('pipei.proyectos_cache');
+    if (cached) listaProyectos = JSON.parse(cached);
+  } catch (e) {}
+
   if (!$('#proyecto')) {
     const wrap = document.createElement('div');
     wrap.innerHTML = `<label for="proyecto">Proyecto <span class="req">*</span></label>
       <select id="proyecto" style="width:100%;height:var(--tap);border:1px solid var(--line);
         border-radius:12px;padding:0 12px;font-size:16px;background:#fff;font-family:inherit">
         <option value="">Selecciona…</option>
-        ${PROYECTOS.map(p => `<option>${p}</option>`).join('')}
+        ${listaProyectos.map(p => `<option>${p}</option>`).join('')}
       </select>`;
     $('#cargo').closest('.form-block').appendChild(wrap);
     $('#proyecto').onchange = e => { store.proyecto = e.target.value; guardar(); revisarGate(); };
   }
   $('#proyecto').value = store.proyecto || '';
+
+  if (typeof Sync !== 'undefined' && Sync.obtenerProyectos) {
+    Sync.obtenerProyectos().then(proys => {
+      if (proys && proys.length) {
+        localStorage.setItem('pipei.proyectos_cache', JSON.stringify(proys));
+        const select = $('#proyecto');
+        if (select) {
+          const valActual = select.value;
+          select.innerHTML = `<option value="">Selecciona…</option>` +
+            proys.map(p => `<option>${p}</option>`).join('');
+          if (valActual) select.value = valActual;
+        }
+      }
+    }).catch(() => {});
+  }
+
 
   const grid = $('#deptGrid');
   grid.innerHTML = '';

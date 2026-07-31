@@ -113,10 +113,30 @@ const Sync = (() => {
     return j.texto || j.text || null;
   }
 
+  /* ── proyectos dinámicos ── */
+  async function obtenerProyectos() {
+    if (!activo) return null;
+    try {
+      const r = await fetch(
+        `${cfg.supabaseUrl.replace(/\/$/, '')}/rest/v1/proyecto?select=codigo,nombre,ubicacion&activo=eq.true&order=codigo.desc`,
+        { method: 'GET', headers: H() }
+      );
+      if (!r.ok) return null;
+      const data = await r.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data.map(p => `${p.codigo} · ${p.nombre}`);
+      }
+    } catch (e) {
+      console.warn('sync proyectos', e);
+    }
+    return null;
+  }
+
   return {
     activo,
     hayTranscripcionIA: !!cfg.transcripcionUrl,
-    abrirSesion, empujarRespuestas, subirAudio, transcribir,
+    abrirSesion, empujarRespuestas, subirAudio, transcribir, obtenerProyectos,
     get sesionId() { return sesionId; }
   };
 })();
+
