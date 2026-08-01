@@ -1,5 +1,6 @@
 /* PipEI Levantamiento - service worker: la app debe abrir sin señal en obra. */
-const CACHE = 'pipei-lev-v4';
+const CACHE = 'pipei-lev-v5';
+
 
 
 const ASSETS = ['./','./index.html','./styles.css','./data.js','./app.js','./sync.js','./config.js','./manifest.json'];
