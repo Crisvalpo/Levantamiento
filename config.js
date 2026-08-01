@@ -4,7 +4,8 @@ window.PIPEI_CONFIG = {
   proyecto: 'EIMI00413',
 
   // Supabase — persistencia compartida (Self-Hosted Oracle VM)
-  supabaseUrl:  'https://api-oracle.lukeapp.me',
+  supabaseUrl:  'https://api-oracle.lukeapp.cl',
+
 
   supabaseKey:  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiYXVkIjoiYXV0aGVudGljYXRlZCIsImlhdCI6MTczOTcyOTI3MiwiZXhwIjoyMDU1MDg5MjcyfQ.4wqBiO7twFOgiLPbHQi9pmTWrM1N6FjlI93mWsuyOiE',
   esquema:      'levantamiento',
