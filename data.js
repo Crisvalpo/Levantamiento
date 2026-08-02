@@ -1,250 +1,304 @@
 /* PipEI · Levantamiento en terreno
-   Banco de preguntas. Cada pregunta corresponde a una decisión de diseño abierta
-   o a un flujo que no puede diagramarse sin esa información.
+   Banco de preguntas. Cada una corresponde a una decisión de diseño abierta o a un
+   flujo que todavía no puede especificarse.
+
+   Alcance corporativo: se responde en cualquier proyecto de la unidad, no sólo en
+   aquellos que hoy usan una herramienta digital. Las preguntas no suponen ningún
+   sistema en particular ni ningún hecho ocurrido en una obra determinada.
 
    tipo:  "texto"  → respuesta abierta, con dictado y grabación
           "opcion" → selección, con campo de detalle opcional
-   nota:  aparece bajo la pregunta, para quien la formula                          */
+   nota:  orientación para quien formula la pregunta                                */
 
 const DEPARTAMENTOS = [
+
+  /* ═══════════════════════════════════════════════════════════════════
+     Sin este contexto, las demás respuestas no son comparables entre obras.
+     ═══════════════════════════════════════════════════════════════════ */
+  {
+    id: 'ctx',
+    nombre: 'Contexto del proyecto',
+    icono: '🧭',
+    prioridad: true,
+    objetivo: 'Situar el proyecto antes de entrar en detalle. Una misma respuesta significa cosas distintas ' +
+              'según el tamaño de la obra y las herramientas con que se trabaja hoy.',
+    grupos: [
+      {
+        titulo: 'Alcance y madurez',
+        nota: 'Responder primero. Toma dos minutos y permite interpretar todo lo que viene después.',
+        preguntas: [
+          { t: 'opcion', q: '¿Este proyecto tiene alcance de piping?',
+            o: ['Sí, es una parte importante', 'Sí, pero es menor', 'No tiene piping'] },
+          { t: 'opcion', q: '¿En qué etapa se encuentra hoy?',
+            o: ['Ingeniería', 'Prefabricación', 'Montaje', 'Pruebas y entrega', 'Cerrado'] },
+          { t: 'opcion', q: '¿Con qué registran hoy el avance de piping?',
+            o: ['Aplicación digital propia', 'Planillas de cálculo', 'Papel y luego digitación',
+                'Sistema del mandante', 'Combinación de varias'] },
+          { t: 'texto',  q: 'Si usan planillas, ¿cuántas y quién las mantiene?',
+            n: 'Interesa saber si hay una sola fuente o varias que alguien concilia a mano.' },
+          { t: 'texto',  q: '¿Cuántas personas trabajan en piping en este proyecto y en qué roles?' },
+          { t: 'texto',  q: 'Órdenes de magnitud: ¿cuántas líneas, spools y uniones tiene el alcance?',
+            n: 'Basta una aproximación. Sirve para dimensionar la solución.' }
+        ]
+      }
+    ]
+  },
+
+  /* ═══════════════════════════════════════════════════════════════════ */
   {
     id: 'ot',
     nombre: 'Oficina Técnica',
     icono: '📐',
     prioridad: true,
-    objetivo: 'Reconstruir el re-spooleo y la evaluación de impacto: los dos flujos de mayor riesgo del ' +
-              'proyecto y los únicos que no pueden derivarse de los datos.',
+    objetivo: 'Reconstruir cómo se maneja un cambio de ingeniería: es el flujo de mayor riesgo y el único ' +
+              'que no puede deducirse observando los datos.',
     grupos: [
       {
-        titulo: 'Re-spooleo',
-        nota: 'Prioridad máxima. Es el flujo que rompió las automatizaciones del prototipo y el mejor caso ' +
-              'de prueba para evaluar la solución del proveedor.',
+        titulo: 'Cambios de ingeniería',
+        nota: 'Prioridad máxima. Conviene pedir el detalle completo, paso a paso.',
         preguntas: [
-          { t: 'texto',  q: 'Cuando llega una revisión nueva de ingeniería, ¿cómo se enteran hoy?',
-            n: 'Interesa el mecanismo real: correo, reunión, alguien que avisa.' },
-          { t: 'texto',  q: '¿Qué los hace decidir entre re-spoolear o corregir el spool existente?' },
-          { t: 'texto',  q: 'Paso a paso: ¿qué hacen primero y qué después? ¿Se borra, se crea, se renombra?',
-            n: 'Es la pregunta que permite diagramar el flujo. Conviene pedir el detalle completo.' },
-          { t: 'texto',  q: '¿Qué pasa con las uniones que ya estaban soldadas en el spool que desaparece?' },
-          { t: 'opcion', q: '¿Se avisa a terreno antes o después de re-spoolear?',
+          { t: 'texto',  q: 'Cuando llega una revisión nueva de un plano, ¿cómo se enteran?',
+            n: 'Interesa el mecanismo real: correo, reunión, alguien que avisa, o se descubre después.' },
+          { t: 'texto',  q: '¿Cómo saben qué trabajo ya ejecutado queda afectado por esa revisión?' },
+          { t: 'texto',  q: '¿Quién decide qué se rehace y qué se conserva?' },
+          { t: 'opcion', q: '¿Se avisa a terreno antes o después de aplicar el cambio?',
             o: ['Antes', 'Después', 'No se avisa formalmente', 'Depende del caso'] },
-          { t: 'texto',  q: '¿Quién autoriza el re-spooleo?' },
-          { t: 'texto',  q: 'Del re-spooleo que rompió las automatizaciones: ¿qué se rompió exactamente y cómo lo repararon?',
-            n: 'Pedir el máximo detalle. Es el caso de prueba central de la solución.' },
-          { t: 'texto',  q: '¿Con qué frecuencia ocurre y cuántos spools se ven afectados en promedio?' }
+          { t: 'opcion', q: 'Mientras se evalúa el cambio, ¿terreno se detiene o sigue trabajando?',
+            o: ['Se detiene', 'Sigue trabajando', 'Depende del componente'] },
+          { t: 'texto',  q: '¿Cuánto suele demorar evaluar el impacto de una revisión?' },
+          { t: 'texto',  q: '¿Con qué frecuencia ocurre y cuánto alcance suele verse afectado?' },
+          { t: 'texto',  q: '¿Ha pasado que un cambio de ingeniería desordenara los registros de avance?',
+            n: 'Si la respuesta es sí, pedir el relato completo: es el mejor caso de prueba que existe ' +
+               'para evaluar cualquier solución.' }
         ]
       },
       {
-        titulo: 'Evaluación de impacto',
+        titulo: 'Trabajo con planos obsoletos',
         preguntas: [
-          { t: 'texto',  q: '¿Cuánto demoran en evaluar los spools afectados por una revisión?' },
-          { t: 'opcion', q: '¿Evalúan spool por spool o miran el isométrico completo y deciden en bloque?',
-            o: ['Spool por spool', 'En bloque por isométrico', 'Depende del alcance del cambio'] },
-          { t: 'texto',  q: '¿Qué miran para decidir si lo ya ejecutado sigue sirviendo?' },
-          { t: 'texto',  q: '¿Cuántas veces la evaluación terminó en retrabajo real, y de qué magnitud?' },
-          { t: 'opcion', q: 'Mientras evalúan, ¿terreno queda detenido o sigue trabajando?',
-            o: ['Queda detenido', 'Sigue trabajando', 'Depende del componente'] }
+          { t: 'texto',  q: '¿Ha ocurrido que se fabrique o monte con una revisión ya superada?' },
+          { t: 'texto',  q: 'Cuando ocurre, ¿cómo se detecta y cuánto después?' },
+          { t: 'texto',  q: '¿Qué hacen hoy para evitarlo?' },
+          { t: 'texto',  q: '¿Cómo saben, mirando un registro de trabajo, bajo qué revisión se ejecutó?' }
         ]
       },
       {
-        titulo: 'Desglose en spools',
+        titulo: 'Desglose y preparación',
         preguntas: [
-          { t: 'texto', q: '¿Quién decide dónde se corta un spool y con qué criterio?' },
-          { t: 'texto', q: '¿Por qué algunos isométricos no se spoolean y van directo a terreno?' },
-          { t: 'texto', q: 'Los estados "Dibujado" y "Terminado" del isométrico: ¿qué significan para ustedes?',
-            n: 'El análisis sugiere que clasifican si el isométrico se desglosa o va directo a terreno. Conviene confirmarlo.' },
-          { t: 'texto', q: '¿Qué información necesitan tener antes de poder spoolear?' }
+          { t: 'texto',  q: '¿Quién define los spools y con qué criterio se decide dónde se corta uno?' },
+          { t: 'texto',  q: '¿Hay isométricos que no se desglosan y se montan directo en terreno? ¿Cuáles y por qué?' },
+          { t: 'texto',  q: '¿Qué información necesitan tener disponible antes de poder desglosar?' },
+          { t: 'texto',  q: '¿Qué estados usan para seguir un isométrico desde que llega hasta que se cierra?',
+            n: 'Interesa la lista de estados tal como la nombran ellos.' }
         ]
       },
       {
-        titulo: 'Consultas técnicas',
+        titulo: 'Consultas a ingeniería',
         preguntas: [
-          { t: 'texto',  q: '¿Cómo llega una consulta, quién la responde y quién la cierra?' },
-          { t: 'opcion', q: 'Mientras una consulta está pendiente, ¿se detiene el trabajo sobre los isométricos afectados?',
+          { t: 'texto',  q: '¿Cómo se levanta una consulta, quién la responde y quién la cierra?' },
+          { t: 'opcion', q: 'Mientras una consulta está pendiente, ¿se detiene el trabajo afectado?',
             o: ['Se detiene', 'Se sigue trabajando', 'Depende de la consulta'] },
-          { t: 'texto',  q: '¿Dónde viven hoy las consultas y sus respuestas?' }
+          { t: 'texto',  q: '¿Dónde quedan registradas las consultas y sus respuestas?' }
         ]
       }
     ]
   },
 
+  /* ═══════════════════════════════════════════════════════════════════ */
   {
     id: 'qc',
     nombre: 'Calidad',
     icono: '🧪',
     prioridad: true,
-    objetivo: 'Completar los flujos de liberación y, sobre todo, conocer el dossier: es el entregable final ' +
-              'del sistema y todo lo demás existe para producirlo.',
+    objetivo: 'Completar los flujos de liberación y conocer el dossier: es el entregable final, y todo lo ' +
+              'demás existe para poder producirlo.',
     grupos: [
       {
         titulo: 'Control dimensional',
         preguntas: [
-          { t: 'texto',  q: '¿Qué se mide exactamente y contra qué documento?' },
-          { t: 'texto',  q: '¿Quién firma la liberación? ¿Queda registro en papel además del sistema?' },
-          { t: 'opcion', q: 'Si el control falla, ¿qué pasa con el spool?',
+          { t: 'texto',  q: '¿Qué se verifica exactamente y contra qué documento?' },
+          { t: 'texto',  q: '¿Quién firma la liberación y dónde queda ese registro?' },
+          { t: 'opcion', q: 'Si el control falla, ¿qué pasa con la pieza?',
             o: ['Vuelve a fabricación', 'Se corrige en sitio', 'Depende de la desviación'] },
-          { t: 'texto',  q: '¿Cuánto tiempo pasa en promedio entre que un spool queda fabricado y se libera?' },
-          { t: 'texto',  q: '¿Por qué no se está registrando en la aplicación?',
-            n: 'La tabla tiene cero registros y su automatización está deshabilitada.' }
+          { t: 'texto',  q: '¿Cuánto tiempo suele pasar entre que una pieza queda fabricada y se libera?' },
+          { t: 'texto',  q: '¿Qué hace que una pieza se quede esperando liberación más de lo normal?' }
         ]
       },
       {
         titulo: 'Tratamiento superficial',
         preguntas: [
-          { t: 'texto',  q: '¿Quién libera la pintura y con qué criterio se rechaza?' },
-          { t: 'opcion', q: 'El engomado, ¿tiene liberación propia o se libera junto con la pintura?',
-            o: ['Liberación propia', 'Junto con la pintura', 'Depende del revestimiento'] },
-          { t: 'opcion', q: '¿Puede liberarse parcialmente un spool?',
+          { t: 'opcion', q: '¿En este proyecto hay tratamiento superficial de piping?',
+            o: ['Pintura', 'Pintura y revestimiento interior', 'Sólo galvanizado o similar', 'No aplica'] },
+          { t: 'texto',  q: '¿Quién libera el tratamiento y con qué criterio se rechaza?' },
+          { t: 'opcion', q: 'Cuando hay más de un tratamiento, ¿cada uno se libera por separado?',
+            o: ['Sí, por separado', 'Se libera todo junto', 'Depende del caso'] },
+          { t: 'opcion', q: '¿Puede liberarse parcialmente una pieza?',
             o: ['Sí, por partes', 'No, es todo o nada'] },
-          { t: 'texto',  q: '¿Qué pasa con la etiqueta del spool durante el tratamiento?' }
+          { t: 'texto',  q: '¿Qué pasa con la identificación de la pieza durante el tratamiento?',
+            n: 'Interesa saber si la marca o etiqueta sobrevive al proceso.' }
         ]
       },
       {
         titulo: 'Ensayos no destructivos',
         preguntas: [
+          { t: 'texto',  q: '¿Qué ensayos exige el contrato y en qué porcentaje?' },
           { t: 'texto',  q: '¿Cómo se solicita un ensayo y quién lo ejecuta?' },
           { t: 'texto',  q: '¿Cuánto demora el resultado y qué pasa con la unión mientras espera?' },
           { t: 'opcion', q: 'Si el ensayo sale mal, ¿se reensaya o se rehace la unión?',
             o: ['Se reensaya', 'Se rehace directamente', 'Depende del hallazgo'] },
-          { t: 'texto',  q: '¿Se está cumpliendo el porcentaje de ensayo que exige el catálogo?',
-            n: 'Sólo 17 de 486 inspecciones registran tipo de ensayo.' },
-          { t: 'texto',  q: '¿Dónde quedan hoy los informes de laboratorio?' }
+          { t: 'texto',  q: '¿Dónde quedan los informes de laboratorio y cómo se vinculan a la unión?' }
         ]
       },
       {
-        titulo: 'Inspección visual y rechazos',
+        titulo: 'Inspección y rechazos',
         preguntas: [
-          { t: 'texto', q: 'Cuando rechazan una unión, ¿cómo distinguen que la soldadura está mala de que el dato está mal registrado?',
-            n: 'Los 6 rechazos registrados fueron todos errores de identificación, ninguno de ejecución.' },
-          { t: 'texto', q: 'Si el problema es de identificación, ¿quién corrige el registro y cómo?' },
-          { t: 'texto', q: '¿Qué inspecciones hacen hoy que no quedan registradas en ninguna parte?' }
+          { t: 'texto',  q: '¿Qué proporción de los rechazos corresponde a un defecto real de ejecución?',
+            n: 'La otra parte suele ser error de registro o de identificación. Interesa distinguirlas.' },
+          { t: 'texto',  q: 'Cuando el problema es de identificación y no de ejecución, ¿cómo lo resuelven?' },
+          { t: 'texto',  q: '¿Qué inspecciones se realizan hoy y no quedan registradas en ninguna parte?' }
         ]
       },
       {
         titulo: 'Dossier de calidad',
-        nota: 'Solicitar un ejemplar completo de un spool cerrado. Es la información más valiosa que puede ' +
+        nota: 'Solicitar un ejemplar completo de una pieza cerrada. Es la información más valiosa que puede ' +
               'obtenerse en este levantamiento.',
         preguntas: [
-          { t: 'texto', q: '¿Qué contiene exactamente el dossier? ¿Se puede ver uno cerrado?' },
-          { t: 'texto', q: '¿Cómo lo arman hoy y cuánto demora?' },
-          { t: 'texto', q: '¿Qué exige el mandante, en qué formato y con qué firmas?' },
-          { t: 'texto', q: '¿Qué parte del armado es la que más tiempo consume?' }
+          { t: 'texto',  q: '¿Qué contiene exactamente el dossier? ¿Se puede ver uno cerrado?' },
+          { t: 'texto',  q: '¿Cómo lo arman hoy y cuánto demora?' },
+          { t: 'texto',  q: '¿Qué exige el mandante, en qué formato y con qué firmas?' },
+          { t: 'texto',  q: '¿Qué parte del armado consume más tiempo?' },
+          { t: 'texto',  q: '¿Qué información les cuesta más reunir a la hora de cerrarlo?' }
         ]
       },
       {
-        titulo: 'Estampas y personal',
+        titulo: 'Calificación del personal',
         preguntas: [
-          { t: 'texto', q: '¿Cómo controlan que un soldador tenga estampa vigente al momento de soldar?' },
-          { t: 'texto', q: '¿Qué pasa con lo que ya soldó si su calificación vence o se desvincula?' }
+          { t: 'texto', q: '¿Cómo controlan que un soldador tenga calificación vigente al momento de soldar?' },
+          { t: 'texto', q: '¿Qué pasa con el trabajo ya ejecutado si una calificación vence o la persona se desvincula?' }
         ]
       }
     ]
   },
 
+  /* ═══════════════════════════════════════════════════════════════════ */
   {
     id: 'log',
     nombre: 'Logística',
     icono: '🚚',
-    objetivo: 'Levantar el flujo físico completo, que hoy no está registrado en el sistema y que constituye ' +
-              'alcance de la segunda versión.',
+    objetivo: 'Levantar el flujo físico completo: desde que el material llega hasta que la pieza queda a pie ' +
+              'de montaje.',
     grupos: [
       {
         titulo: 'Despacho y recepción',
         preguntas: [
-          { t: 'texto',  q: 'El despacho de hoy, paso a paso: ¿quién pide, quién autoriza, quién carga, quién recibe?' },
-          { t: 'opcion', q: '¿Un spool puede ir en dos guías distintas?',
+          { t: 'texto',  q: 'El despacho paso a paso: ¿quién pide, quién autoriza, quién carga, quién recibe?' },
+          { t: 'opcion', q: '¿Una misma pieza puede ir en dos guías distintas?',
             o: ['Sí', 'No', 'Excepcionalmente'] },
           { t: 'opcion', q: '¿Se despacha parcial?',
             o: ['Sí, es habitual', 'No', 'Sólo por excepción'] },
           { t: 'texto',  q: '¿Qué pasa cuando llega a obra algo que no estaba en la guía?' },
-          { t: 'texto',  q: '¿Por qué las guías no se están registrando en la aplicación?',
-            n: 'La bitácora tiene cero registros y el rol Logística no tiene permisos de escritura.' }
+          { t: 'texto',  q: '¿Dónde queda registrado el despacho y quién lo consulta después?' },
+          { t: 'texto',  q: '¿Cómo saben dónde está físicamente una pieza en un momento dado?' }
         ]
       },
       {
         titulo: 'Materiales',
         preguntas: [
-          { t: 'texto',  q: '¿Cómo saben hoy si hay material disponible para fabricar un spool determinado?',
-            n: 'Sólo 9 de 3.091 ítems de despiece tienen vínculo con un spool.' },
+          { t: 'texto',  q: '¿Cómo saben si hay material disponible para fabricar una pieza determinada?',
+            n: 'Interesa si existe vínculo entre el despiece y la pieza, o si se resuelve por experiencia.' },
           { t: 'texto',  q: 'En bodega, ¿qué se controla y qué no?' },
           { t: 'texto',  q: '¿Qué hacen cuando falta material a mitad de una fabricación?' },
-          { t: 'texto',  q: '¿Cuánto material se recibe que no estaba en el despiece original?' }
+          { t: 'texto',  q: '¿Cuánto material llega que no estaba en el despiece original?' }
         ]
       }
     ]
   },
 
+  /* ═══════════════════════════════════════════════════════════════════ */
   {
     id: 'terreno',
     nombre: 'Supervisión y Terreno',
     icono: '🦺',
     prioridad: true,
-    objetivo: 'El objetivo no es el proceso sino la interacción: dónde se pierde tiempo, qué no se alcanza a ' +
-              'reportar y qué hace la gente cuando la herramienta no acompaña.',
+    objetivo: 'Aquí no interesa el proceso sino el momento de la captura: dónde se pierde tiempo, qué no se ' +
+              'alcanza a registrar y qué hace la gente cuando la herramienta no acompaña.',
     grupos: [
       {
         titulo: 'El día real',
         preguntas: [
-          { t: 'texto',  q: 'Cuéntame un día completo: ¿en qué momento reportan?',
-            n: 'Interesa saber si reportan al terminar cada unión o al final de la jornada.' },
-          { t: 'texto',  q: '¿Qué reportan y qué no alcanzan a reportar nunca?' },
-          { t: 'texto',  q: '¿Qué te piden por radio que la aplicación no resuelve?' },
-          { t: 'texto',  q: 'El emplantillado: ¿en qué casos pasan días entre emplantillar y soldar?',
-            n: 'La mediana es cero días, pero hay una cola de 51 uniones con separación real.' },
-          { t: 'opcion', q: '¿Qué hacen cuando no hay señal?',
-            o: ['Anotan en papel y transcriben', 'La app funciona igual', 'Esperan a tener señal', 'Otra'] }
+          { t: 'texto',  q: 'Cuéntame un día completo: ¿en qué momento se registra el avance?',
+            n: 'Interesa saber si se registra al terminar cada trabajo o al final de la jornada.' },
+          { t: 'opcion', q: '¿Quién registra el avance?',
+            o: ['El capataz en terreno', 'El supervisor', 'Una persona en oficina', 'Varios según el caso'] },
+          { t: 'texto',  q: '¿Qué se registra y qué no se alcanza a registrar nunca?' },
+          { t: 'texto',  q: 'Entre que el trabajo se hace y queda registrado, ¿cuánto pasa?' },
+          { t: 'opcion', q: '¿Cómo es la señal en el frente de trabajo?',
+            o: ['Buena en todo el sector', 'Sólo en algunos puntos', 'Prácticamente no hay'] },
+          { t: 'texto',  q: '¿Qué hacen cuando no hay señal?' }
         ]
       },
       {
-        titulo: 'La herramienta',
+        titulo: 'La herramienta actual',
         preguntas: [
-          { t: 'texto', q: '¿Qué es lo que más molesta de la aplicación hoy?' },
-          { t: 'texto', q: '¿Qué hacen dos veces que debería hacerse una sola?' },
-          { t: 'texto', q: 'Cuando llega alguien nuevo, ¿cuánto demora en poder reportar solo?' },
-          { t: 'texto', q: '¿Qué información buscan en la app y no encuentran?' }
+          { t: 'texto', q: '¿Qué es lo que más molesta de la forma en que se registra hoy?' },
+          { t: 'texto', q: '¿Qué se hace dos veces que debería hacerse una sola?' },
+          { t: 'texto', q: 'Cuando llega alguien nuevo, ¿cuánto demora en poder registrar solo?' },
+          { t: 'texto', q: '¿Qué información buscan y no encuentran cuando están en el frente?' },
+          { t: 'texto', q: '¿Qué les piden por radio que hoy no pueden responder en el momento?' }
+        ]
+      },
+      {
+        titulo: 'Identificación de piezas',
+        preguntas: [
+          { t: 'texto',  q: '¿Cómo identifican una pieza en terreno? ¿Marca en el acero, etiqueta, plano?' },
+          { t: 'texto',  q: '¿Con qué frecuencia se pierde o se borra esa identificación?' },
+          { t: 'texto',  q: 'Si alguien pide una pieza por radio, ¿cómo la nombra para que la encuentren?',
+            n: 'Es la clave del diseño del identificador. Interesa la frase exacta que se usa.' }
         ]
       }
     ]
   },
 
+  /* ═══════════════════════════════════════════════════════════════════ */
   {
     id: 'cub',
-    nombre: 'Cubicaciones',
+    nombre: 'Cubicaciones y Control',
     icono: '📊',
-    objetivo: 'Definir el contrato de datos entre PipEI y la aplicación de cubicaciones, que es el único ' +
-              'requerimiento de interfaz que quedó abierto.',
+    objetivo: 'Definir qué dato necesita quien mide el avance para emitir el estado de pago, y cómo lo obtiene ' +
+              'hoy.',
     grupos: [
       {
-        titulo: 'Contrato de datos',
+        titulo: 'Medición del avance',
         preguntas: [
-          { t: 'texto',  q: '¿Qué dato exacto necesitas de cada unión ejecutada para poder cubicarla?',
-            n: 'Esta respuesta define la interfaz entre las dos aplicaciones.' },
+          { t: 'opcion', q: '¿En qué unidad se mide el avance de piping en este contrato?',
+            o: ['Pulgadas diametrales', 'Metros lineales', 'Uniones ejecutadas', 'Ponderación por hitos',
+                'Combinación de varias'] },
+          { t: 'texto',  q: '¿Qué dato exacto necesitas de cada trabajo ejecutado para poder cubicarlo?',
+            n: 'Esta respuesta define qué debe entregar el sistema.' },
           { t: 'texto',  q: '¿Cómo armas el estado de pago hoy y desde qué fuente?' },
           { t: 'texto',  q: '¿Qué revisas a mano antes de emitirlo?' },
-          { t: 'opcion', q: 'Si recibes el dato al reportarse la ejecución, sin esperar la inspección, ¿te sirve?',
-            o: ['Sí, me sirve', 'Me complica', 'Sirve con reparos'],
-            n: 'La tasa de observación es cercana al 2%.' },
-          { t: 'texto',  q: '¿Qué pasa cuando una unión ya cubicada resulta rechazada después?' }
+          { t: 'texto',  q: '¿Cuánto tiempo te toma cada período?' }
         ]
       },
       {
-        titulo: 'Medición',
+        titulo: 'Confiabilidad del dato',
         preguntas: [
-          { t: 'texto',  q: 'Los metros: ¿de dónde los obtienes y qué haces cuando no cuadran con la línea?',
-            n: 'El campo de metros por unión es un prorrateo del largo de línea, no una medición.' },
-          { t: 'texto',  q: '¿Con qué frecuencia necesitas la medición en metros montados en vez de pulgadas diametrales?' },
+          { t: 'opcion', q: 'Para cubicar, ¿te basta con saber que el trabajo se ejecutó, o necesitas la inspección aprobada?',
+            o: ['Basta la ejecución', 'Necesito la inspección', 'Depende del ítem'] },
+          { t: 'texto',  q: '¿Qué pasa cuando algo ya cubicado resulta rechazado después?' },
+          { t: 'texto',  q: 'Si se mide en metros, ¿de dónde salen y qué haces cuando no cuadran?' },
           { t: 'texto',  q: '¿Qué discutes habitualmente con el mandante y con qué lo respaldas?' }
         ]
       }
     ]
   },
 
+  /* ═══════════════════════════════════════════════════════════════════ */
   {
     id: 'todos',
     nombre: 'Para todos',
     icono: '💬',
-    objetivo: 'Formular estas tres a cada interlocutor por separado. Su valor está en el contraste entre las ' +
-              'respuestas, no en cada respuesta aislada.',
+    objetivo: 'Formular a cada interlocutor por separado. Su valor está en el contraste entre las respuestas, ' +
+              'no en cada respuesta aislada.',
     grupos: [
       {
         titulo: 'Transversales',
@@ -253,13 +307,17 @@ const DEPARTAMENTOS = [
         preguntas: [
           { t: 'texto', q: '¿Qué información buscas y no encuentras?' },
           { t: 'texto', q: '¿Qué haces hoy en una planilla que preferirías no hacer?' },
-          { t: 'texto', q: 'Si pudieras cambiar una sola cosa de cómo se trabaja hoy, ¿cuál sería?' }
+          { t: 'texto', q: 'Si pudieras cambiar una sola cosa de cómo se trabaja hoy, ¿cuál sería?' },
+          { t: 'texto', q: '¿Qué se hace bien en este proyecto que valdría la pena que hicieran los demás?',
+            n: 'Pregunta de cierre. Suele entregar las mejores prácticas que nadie documentó.' }
         ]
       }
     ]
   }
 ];
 
+/* Proyectos de la unidad. La misma pregunta respondida en varias obras revela si
+   el proceso está estandarizado o si cada proyecto lo resuelve a su manera.       */
 const PROYECTOS = [
   'EIMI00417 · Contrato CC-006 Obras Civiles y Montaje Electromecánico PG210 Área Puerto',
   'EIMI00416 · EPV1 Servicio de Ingeniería Etapa FEED',
@@ -293,4 +351,3 @@ const PROYECTOS = [
   'MIPE00101 · Servicios Electromecánica Sistema de Manejo - Proyecto IPCC',
   'Otro proyecto'
 ];
-
