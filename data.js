@@ -24,25 +24,50 @@ const DEPARTAMENTOS = [
               'según el tamaño de la obra y las herramientas con que se trabaja hoy.',
     grupos: [
       {
-        titulo: 'Alcance y madurez',
-        nota: 'Responder primero. Toma dos minutos y permite interpretar todo lo que viene después.',
+        titulo: 'Alcance del proyecto',
         preguntas: [
+          { t: 'opcion', q: '¿Qué especialidades comprende el alcance de este proyecto?',
+            o: ['Piping y Montaje', 'Estructuras y Obras Civiles', 'Multidisciplinario', 'Ingeniería / FEED'] },
           { t: 'opcion', q: '¿Este proyecto tiene alcance de piping?',
             o: ['Sí, es una parte importante', 'Sí, pero es menor', 'No tiene piping'] },
-          { t: 'opcion', q: '¿En qué etapa se encuentra hoy?',
-            o: ['Ingeniería', 'Prefabricación', 'Montaje', 'Pruebas y entrega', 'Cerrado'] },
-          { t: 'opcion', q: '¿Con qué registran hoy el avance de piping?',
+          { t: 'texto',  q: '¿Cuántas personas trabajan en piping en este proyecto y en qué roles?' },
+          { t: 'texto',  q: '¿Cuál es la duración planificada del proyecto y la fecha estimada de término?' }
+        ]
+      },
+      {
+        titulo: 'Etapa de la obra',
+        preguntas: [
+          { t: 'opcion', q: '¿En qué etapa se encuentra hoy la obra?',
+            o: ['Ingeniería / Diseño', 'Movilización y Prefabricación', 'Montaje Primario', 'Pruebas y Entrega', 'Cierre'] },
+          { t: 'texto',  q: '¿Cuál es el porcentaje de avance físico real al día de hoy?' },
+          { t: 'texto',  q: '¿Cuáles son los principales hitos o fechas críticas del contrato en los próximos meses?' }
+        ]
+      },
+      {
+        titulo: 'Herramientas actuales',
+        preguntas: [
+          { t: 'opcion', q: '¿Con qué registran hoy el avance del proyecto?',
             o: ['Aplicación digital propia', 'Planillas de cálculo', 'Papel y luego digitación',
                 'Sistema del mandante', 'Combinación de varias'] },
           { t: 'texto',  q: 'Si usan planillas, ¿cuántas y quién las mantiene?',
             n: 'Interesa saber si hay una sola fuente o varias que alguien concilia a mano.' },
-          { t: 'texto',  q: '¿Cuántas personas trabajan en piping en este proyecto y en qué roles?' },
-          { t: 'texto',  q: 'Órdenes de magnitud: ¿cuántas líneas, spools y uniones tiene el alcance?',
-            n: 'Basta una aproximación. Sirve para dimensionar la solución.' }
+          { t: 'opcion', q: '¿Con qué frecuencia se actualizan los reportes de avance?',
+            o: ['Diario', 'Semanal', 'Por hito o quincenal'] },
+          { t: 'texto',  q: '¿Qué software o formato exige el mandante para la entrega de información de avance?' }
+        ]
+      },
+      {
+        titulo: 'Volumetría',
+        preguntas: [
+          { t: 'texto',  q: 'Órdenes de magnitud: ¿cuántas líneas, spools, uniones o toneladas tiene el alcance?',
+            n: 'Basta una aproximación. Sirve para dimensionar la solución.' },
+          { t: 'texto',  q: '¿Cuál es el volumen diario de producción o avance esperado en la etapa peak del proyecto?' },
+          { t: 'texto',  q: '¿Cuántos frentes de trabajo o cuadrillas operan en paralelo en la obra?' }
         ]
       }
     ]
   },
+
 
   /* ═══════════════════════════════════════════════════════════════════ */
   {
